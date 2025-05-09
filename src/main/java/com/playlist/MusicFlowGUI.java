@@ -2,126 +2,133 @@ package com.playlist;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import entity.Musica;
 
 public class MusicFlowGUI {
     private JFrame frame;
     private JPanel panel;
-    private JButton exibirMusicas, adicionarMusica, criarPlaylist, exibirPlaylists, adicionarMusicaPlaylist, buscarMusica, deletarMusica, listarPlaylist, sair;
     private MusicaDAO dao;
 
     public MusicFlowGUI() {
         dao = new MusicaDAO();
         frame = new JFrame("MusicFlow");
-        frame.setSize(400, 500);
+        frame.setSize(450, 550);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
         panel = new JPanel();
         panel.setLayout(new GridLayout(9, 1, 10, 10));
-        panel.setBackground(new Color(30, 30, 30));
+        panel.setBackground(new Color(20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        exibirMusicas = createButton("Exibir Todas Músicas");
-        adicionarMusica = createButton("Adicionar Música");
-        criarPlaylist = createButton("Criar Playlist");
-        exibirPlaylists = createButton("Exibir Playlists");
-        adicionarMusicaPlaylist = createButton("Adicionar Música à Playlist");
-        buscarMusica = createButton("Buscar Música");
-        deletarMusica = createButton("Deletar Música");
-        listarPlaylist = createButton("Listar Playlist");
-        sair = createButton("SAIR");
+        dao.criarDatabase();
 
-        panel.add(exibirMusicas);
-        panel.add(adicionarMusica);
-        panel.add(criarPlaylist);
-        panel.add(exibirPlaylists);
-        panel.add(adicionarMusicaPlaylist);
-        panel.add(buscarMusica);
-        panel.add(deletarMusica);
-        panel.add(listarPlaylist);
-        panel.add(sair);
+        String[] buttonLabels = {
+                "Exibir Todas Músicas", "Adicionar Música", "Criar Playlist", "Exibir Playlists",
+                "Adicionar Música à Playlist", "Buscar Música", "Deletar Música", "Listar Playlist", "SAIR"
+        };
+
+        for (String label : buttonLabels) {
+            JButton button = createStyledButton(label);
+            panel.add(button);
+            addAction(button, label);
+        }
 
         frame.add(panel);
         frame.setVisible(true);
-
-        addActionListeners();
     }
 
-    private JButton createButton(String text) {
+    private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setBackground(new Color(50, 50, 50));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.DARK_GRAY, 1, true),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        button.setFont(new Font("Arial", Font.BOLD, 14));
         return button;
     }
 
-    private void addActionListeners() {
-        exibirMusicas.addActionListener(e -> JOptionPane.showMessageDialog(frame, dao.exibirMusicas()));
-
-        adicionarMusica.addActionListener(e -> {
-            JTextField titulo = new JTextField();
-            JTextField artista = new JTextField();
-            JTextField album = new JTextField();
-            JTextField genero = new JTextField();
-            JTextField ano = new JTextField();
-
-            Object[] fields = {
-                    "Título:", titulo,
-                    "Artista:", artista,
-                    "Álbum:", album,
-                    "Gênero:", genero,
-                    "Ano:", ano
-            };
-
-            int option = JOptionPane.showConfirmDialog(frame, fields, "Adicionar Música", JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION) {
-                dao.adicionarMusica(titulo.getText(), artista.getText(), album.getText(), genero.getText(), Integer.parseInt(ano.getText()));
+    private void addAction(JButton button, String action) {
+        button.addActionListener(e -> {
+            switch (action) {
+                case "Exibir Todas Músicas":
+                    JOptionPane.showMessageDialog(frame, dao.exibirMusicas());
+                    break;
+                case "Adicionar Música":
+                    adicionarMusica();
+                    break;
+                case "Criar Playlist":
+                    String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
+                    if (nomePlaylist != null) dao.criarPlaylist(nomePlaylist);
+                    break;
+                case "Exibir Playlists":
+                    dao.listarPlaylists();
+                    break;
+                case "Adicionar Música à Playlist":
+                    adicionarMusicaAPlaylist();
+                    break;
+                case "Buscar Música":
+                    buscarMusica();
+                    break;
+                case "Deletar Música":
+                    deletarMusica();
+                    break;
+                case "Listar Playlist":
+                    listarPlaylist();
+                    break;
+                case "SAIR":
+                    System.exit(0);
+                    break;
             }
         });
+    }
 
-        criarPlaylist.addActionListener(e -> {
-            String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
-            if (nomePlaylist != null) {
-                dao.criarPlaylist(nomePlaylist);
-            }
-        });
+    private void adicionarMusica() {
+        JTextField titulo = new JTextField();
+        JTextField artista = new JTextField();
+        JTextField album = new JTextField();
+        JTextField genero = new JTextField();
+        JTextField ano = new JTextField();
 
-        exibirPlaylists.addActionListener(e -> dao.listarPlaylists());
+        Object[] fields = {"Título:", titulo, "Artista:", artista, "Álbum:", album, "Gênero:", genero, "Ano:", ano};
+        int option = JOptionPane.showConfirmDialog(frame, fields, "Adicionar Música", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            dao.adicionarMusica(titulo.getText(), artista.getText(), album.getText(), genero.getText(), Integer.parseInt(ano.getText()));
+        }
+    }
 
-        adicionarMusicaPlaylist.addActionListener(e -> {
-            String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
-            String idMusica = JOptionPane.showInputDialog("ID da Música:");
-            if (nomePlaylist != null && idMusica != null) {
-                dao.adicionarMusicaAPlaylist(nomePlaylist, Integer.parseInt(idMusica));
-            }
-        });
+    private void adicionarMusicaAPlaylist() {
+        String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
+        String idMusica = JOptionPane.showInputDialog("ID da Música:");
+        if (nomePlaylist != null && idMusica != null) {
+            dao.adicionarMusicaAPlaylist(nomePlaylist, Integer.parseInt(idMusica));
+        }
+    }
 
-        buscarMusica.addActionListener(e -> {
-            String[] options = {"Título", "Artista", "Álbum", "Gênero"};
-            int choice = JOptionPane.showOptionDialog(frame, "Buscar por:", "Buscar Música",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-            if (choice >= 0) {
-                String parametro = options[choice].toLowerCase();
-                String valor = JOptionPane.showInputDialog("Digite o " + options[choice] + ":");
-                JOptionPane.showMessageDialog(frame, dao.buscarMusica(parametro, valor));
-            }
-        });
+    private void buscarMusica() {
+        String[] options = {"titulo", "artista", "album", "genero"};
+        int choice = JOptionPane.showOptionDialog(frame, "Buscar por:", "Buscar Música",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (choice >= 0) {
+            String parametro = options[choice];
+            String valor = JOptionPane.showInputDialog("Digite o " + options[choice] + ":");
+            JOptionPane.showMessageDialog(frame, dao.buscarMusica(parametro, valor));
+        }
+    }
 
-        deletarMusica.addActionListener(e -> {
-            String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
-            String idMusica = JOptionPane.showInputDialog("ID da Música:");
-            if (nomePlaylist != null && idMusica != null) {
-                dao.deletarMusica(nomePlaylist, Integer.parseInt(idMusica));
-            }
-        });
+    private void deletarMusica() {
+        String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
+        String idMusica = JOptionPane.showInputDialog("ID da Música:");
+        if (nomePlaylist != null && idMusica != null) {
+            dao.deletarMusica(nomePlaylist, Integer.parseInt(idMusica));
+        }
+    }
 
-        listarPlaylist.addActionListener(e -> {
-            String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
-            JOptionPane.showMessageDialog(frame, dao.exibirPlaylist(nomePlaylist));
-        });
-
-        sair.addActionListener(e -> System.exit(0));
+    private void listarPlaylist() {
+        String nomePlaylist = JOptionPane.showInputDialog("Nome da Playlist:");
+        JOptionPane.showMessageDialog(frame, dao.exibirPlaylist(nomePlaylist));
     }
 
     public static void main(String[] args) {
