@@ -1,7 +1,11 @@
 package com.playlist;
 
+import entity.Musica;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class MusicFlowGUI {
     private JFrame frame;
@@ -84,6 +88,32 @@ public class MusicFlowGUI {
             }
         });
     }
+
+    private void exibirMusicasOrdenadas() {
+        String[] campos = {"titulo", "artista", "ano"};
+        String campo = (String) JOptionPane.showInputDialog(frame, "Ordenar por:",
+                "Critério de Ordenação", JOptionPane.PLAIN_MESSAGE, null, campos, campos[0]);
+        if (campo == null) return;
+
+        int ordem = JOptionPane.showConfirmDialog(frame, "Ordenar de forma crescente? (Não para decrescente)",
+                "Direção da Ordenação", JOptionPane.YES_NO_OPTION);
+        boolean asc = (ordem == JOptionPane.YES_OPTION);
+
+        List<Musica> musicas = dao.listarMusicasOrdenadasPor(campo, asc);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-5s | %-15s | %-15s | %-10s | %-10s | %-4s%n",
+                "ID", "Título", "Artista", "Álbum", "Gênero", "Ano"));
+        sb.append("-----------------------------------------------------------------------------\n");
+
+        for (Musica m : musicas) {
+            sb.append(String.format("%-5d | %-15s | %-15s | %-10s | %-10s | %-4d%n",
+                    m.getId(), m.getTitulo(), m.getArtista(), m.getAlbum(), m.getGenero(), m.getAno()));
+        }
+
+        JOptionPane.showMessageDialog(frame, sb.toString());
+    }
+
 
     private void adicionarMusica() {
         JTextField titulo = new JTextField();

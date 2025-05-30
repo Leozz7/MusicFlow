@@ -1,6 +1,11 @@
 package com.playlist;
 
+import entity.Musica;
+import entity.MusicaService;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MusicaDAO {
 
@@ -16,9 +21,54 @@ public class MusicaDAO {
         }
     }
 
-    public void criarPlaylist(String nome) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + nome + " (id INT AUTO_INCREMENT PRIMARY KEY, titulo VARCHAR(255), artista VARCHAR(255), album VARCHAR(255), genero VARCHAR(50), ano INT)";
+    public List<Musica> listarTodasMusicas() {
+        List<Musica> musicas = new ArrayList<>();
+        String sql = "SELECT * FROM Musica";
 
+        try (Connection conn = Conexao.getConexao();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Musica m = new Musica();
+                m.setId(rs.getInt("id"));
+                m.setTitulo(rs.getString("titulo"));
+                m.setArtista(rs.getString("artista"));
+                m.setAlbum(rs.getString("album"));
+                m.setGenero(rs.getString("genero"));
+                m.setAno(rs.getInt("ano"));
+                musicas.add(m);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return musicas;
+    }
+
+    public List<Musica> listarMusicasOrdenadasPor(String campo, boolean asc) {
+        List<Musica> musicas = listarTodasMusicas();
+        MusicaService service = new MusicaService();
+
+        switch (campo.toLowerCase()) {
+            case "titulo":
+                service.ordenarPorTitulo(musicas, asc);
+                break;
+            case "artista":
+                service.ordenarPorArtista(musicas, asc);
+                break;
+            case "ano":
+                service.ordenarPorAno(musicas, asc);
+                break;
+            default:
+                //Não faz nada
+        }
+        return musicas;
+    }
+
+
+    public void criarPlaylist(String nome) {
+        String sql = "CREATE TABLE IF NOT EXISTS " + nome +
+                " (id INT AUTO_INCREMENT PRIMARY KEY, titulo VARCHAR(255), artista VARCHAR(255), album VARCHAR(255), genero VARCHAR(50), ano INT)";
         try (Connection conn = Conexao.getConexao();
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
