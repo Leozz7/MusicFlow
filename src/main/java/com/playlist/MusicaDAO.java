@@ -60,7 +60,6 @@ public class MusicaDAO {
                 service.ordenarPorAno(musicas, asc);
                 break;
             default:
-                //Não faz nada
         }
         return musicas;
     }
