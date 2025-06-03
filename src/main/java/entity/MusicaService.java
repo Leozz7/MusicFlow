@@ -17,6 +17,6 @@ public class MusicaService {
         };
 
         if (!asc) comparator = comparator.reversed();
-        Collections.sort(musicas, comparator);
+        musicas.sort(comparator);
     }
 }
