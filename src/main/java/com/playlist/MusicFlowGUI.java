@@ -6,7 +6,6 @@ import entity.MusicaService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
 public class MusicFlowGUI {
@@ -24,8 +23,8 @@ public class MusicFlowGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
-        Color backgroundColor = new Color(18, 32, 47);  // Azul escuro
-        Color buttonColor = new Color(52, 152, 219);    // Azul claro
+        Color backgroundColor = new Color(18, 32, 47);
+        Color buttonColor = new Color(52, 152, 219);
         Color textColor = Color.WHITE;
 
         JPanel panel = new JPanel(new GridLayout(9, 1, 10, 10));
@@ -45,7 +44,7 @@ public class MusicFlowGUI {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g2.setColor(getBackground());
-                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);  // Arredondamento aqui!
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
                     super.paintComponent(g);
                     g2.dispose();
                 }
@@ -54,8 +53,8 @@ public class MusicFlowGUI {
             btn.setForeground(textColor);
             btn.setFocusPainted(false);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
-            btn.setBorder(new EmptyBorder(10, 20, 10, 20));  // Espaçamento interno
-            btn.setContentAreaFilled(false);  // Para ativar o efeito customizado
+            btn.setBorder(new EmptyBorder(10, 20, 10, 20));
+            btn.setContentAreaFilled(false);
             btn.setOpaque(false);
             btn.addActionListener(e -> executarAcao(b));
             panel.add(btn);
@@ -79,6 +78,7 @@ public class MusicFlowGUI {
             case "Sair" -> System.exit(0);
         }
     }
+
 
     private void exibirLista(List<Musica> musicas) {
         if (musicas == null || musicas.isEmpty()) {

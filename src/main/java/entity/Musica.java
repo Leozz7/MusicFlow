@@ -19,21 +19,51 @@ public class Musica {
         this.ano = ano;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getArtista() { return artista; }
-    public void setArtista(String artista) { this.artista = artista; }
+    public String getTitulo() {
+        return titulo;
+    }
 
-    public String getAlbum() { return album; }
-    public void setAlbum(String album) { this.album = album; }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-    public String getGenero() { return genero; }
-    public void setGenero(String genero) { this.genero = genero; }
+    public String getArtista() {
+        return artista;
+    }
 
-    public int getAno() { return ano; }
-    public void setAno(int ano) { this.ano = ano; }
+    public void setArtista(String artista) {
+        this.artista = artista;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public int getAno() {
+        return ano;
+    }
+
+    public void setAno(int ano) {
+        this.ano = ano;
+    }
 }

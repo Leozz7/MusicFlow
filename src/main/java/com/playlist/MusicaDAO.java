@@ -1,6 +1,5 @@
 package com.playlist;
 
-import com.playlist.Conexao;
 import entity.Musica;
 
 import java.sql.*;
