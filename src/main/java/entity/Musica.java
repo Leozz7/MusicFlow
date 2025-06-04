@@ -1,6 +1,6 @@
 package entity;
 
-public class Musica {
+public class Musica implements Comparable<Musica> {
     private int id;
     private String titulo;
     private String artista;
@@ -17,6 +17,11 @@ public class Musica {
         this.album = album;
         this.genero = genero;
         this.ano = ano;
+    }
+
+    @Override
+    public int compareTo(Musica outra) {
+        return this.titulo.compareToIgnoreCase(outra.titulo);
     }
 
     public int getId() {
