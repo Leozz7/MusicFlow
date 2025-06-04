@@ -28,6 +28,7 @@ public class MusicFlowGUI {
 
         String[] buttons = {
                 "Exibir Músicas", "Adicionar Música", "Buscar Música", "Ordenar Músicas",
+                "Adicionar PlayList", "Exibir Playlist", "Adicionar Musica a Playlist",
                 "Deletar Música", "Sair"
         };
 
@@ -51,6 +52,9 @@ public class MusicFlowGUI {
             case "Adicionar Música" -> adicionarMusica();
             case "Buscar Música" -> buscarMusica();
             case "Ordenar Músicas" -> ordenarMusicas();
+            case "Adicionar PlayList" -> adicionarPlaylist();
+            case "Exibir Playlist" -> exibirPlaylist();
+            case "Adicionar Musica a Playlist" -> adicionarMusicaAPlaylist();
             case "Deletar Música" -> deletarMusica();
             case "Sair" -> System.exit(0);
         }
@@ -91,6 +95,7 @@ public class MusicFlowGUI {
             try {
                 m.setAno(Integer.parseInt(fields[4].getText()));
                 dao.adicionarMusica(m);
+                JOptionPane.showMessageDialog(frame, "Música adicionada com sucesso!");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "Ano inválido. Digite um número inteiro.");
             }
@@ -127,6 +132,37 @@ public class MusicFlowGUI {
             try {
                 int id = Integer.parseInt(idStr);
                 dao.deletarMusica(id);
+                JOptionPane.showMessageDialog(frame, "Música deletada com sucesso!");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "ID inválido.");
+            }
+        }
+    }
+
+    private void adicionarPlaylist() {
+        String nome = JOptionPane.showInputDialog("Digite o nome da playlist:");
+        if (nome != null && !nome.trim().isEmpty()) {
+            dao.criarPlaylist(nome);
+            JOptionPane.showMessageDialog(frame, "Playlist '" + nome + "' criada com sucesso!");
+        }
+    }
+
+    private void exibirPlaylist() {
+        String nome = JOptionPane.showInputDialog("Digite o nome da playlist a exibir:");
+        if (nome != null && !nome.trim().isEmpty()) {
+            String resultado = dao.exibirPlaylist(nome);
+            JOptionPane.showMessageDialog(frame, resultado);
+        }
+    }
+
+    private void adicionarMusicaAPlaylist() {
+        String nome = JOptionPane.showInputDialog("Digite o nome da playlist:");
+        String idStr = JOptionPane.showInputDialog("Digite o ID da música a adicionar:");
+        if (nome != null && idStr != null) {
+            try {
+                int id = Integer.parseInt(idStr);
+                dao.adicionarMusicaAPlaylist(nome, id);
+                JOptionPane.showMessageDialog(frame, "Música adicionada à playlist '" + nome + "' com sucesso!");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "ID inválido.");
             }
