@@ -4,7 +4,9 @@ import entity.Musica;
 import entity.MusicaService;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
 public class MusicFlowGUI {
@@ -22,8 +24,12 @@ public class MusicFlowGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
+        Color backgroundColor = new Color(18, 32, 47);  // Azul escuro
+        Color buttonColor = new Color(52, 152, 219);    // Azul claro
+        Color textColor = Color.WHITE;
+
         JPanel panel = new JPanel(new GridLayout(9, 1, 10, 10));
-        panel.setBackground(new Color(20, 20, 20));
+        panel.setBackground(backgroundColor);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         String[] buttons = {
@@ -33,16 +39,30 @@ public class MusicFlowGUI {
         };
 
         for (String b : buttons) {
-            JButton btn = new JButton(b);
-            btn.setBackground(new Color(50, 50, 50));
-            btn.setForeground(Color.WHITE);
+            JButton btn = new JButton(b) {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(getBackground());
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);  // Arredondamento aqui!
+                    super.paintComponent(g);
+                    g2.dispose();
+                }
+            };
+            btn.setBackground(buttonColor);
+            btn.setForeground(textColor);
             btn.setFocusPainted(false);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
+            btn.setBorder(new EmptyBorder(10, 20, 10, 20));  // Espaçamento interno
+            btn.setContentAreaFilled(false);  // Para ativar o efeito customizado
+            btn.setOpaque(false);
             btn.addActionListener(e -> executarAcao(b));
             panel.add(btn);
         }
 
         frame.add(panel);
+        frame.getContentPane().setBackground(backgroundColor);
         frame.setVisible(true);
     }
 
@@ -54,7 +74,7 @@ public class MusicFlowGUI {
             case "Ordenar Músicas" -> ordenarMusicas();
             case "Adicionar PlayList" -> adicionarPlaylist();
             case "Exibir Playlist" -> exibirPlaylist();
-            case "Adicionar Musica a Playlist" -> adicionarMusicaAPlaylist();
+            case "Adicionar Musica a Playlist" -> adicionarMusicaPlaylist();
             case "Deletar Música" -> deletarMusica();
             case "Sair" -> System.exit(0);
         }
@@ -65,7 +85,6 @@ public class MusicFlowGUI {
             JOptionPane.showMessageDialog(frame, "Nenhuma música encontrada.");
             return;
         }
-
         StringBuilder sb = new StringBuilder("ID | Título | Artista | Álbum | Gênero | Ano\n");
         sb.append("------------------------------------------------------------\n");
         for (Musica m : musicas) {
@@ -95,7 +114,6 @@ public class MusicFlowGUI {
             try {
                 m.setAno(Integer.parseInt(fields[4].getText()));
                 dao.adicionarMusica(m);
-                JOptionPane.showMessageDialog(frame, "Música adicionada com sucesso!");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "Ano inválido. Digite um número inteiro.");
             }
@@ -132,7 +150,6 @@ public class MusicFlowGUI {
             try {
                 int id = Integer.parseInt(idStr);
                 dao.deletarMusica(id);
-                JOptionPane.showMessageDialog(frame, "Música deletada com sucesso!");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "ID inválido.");
             }
@@ -142,27 +159,25 @@ public class MusicFlowGUI {
     private void adicionarPlaylist() {
         String nome = JOptionPane.showInputDialog("Digite o nome da playlist:");
         if (nome != null && !nome.trim().isEmpty()) {
-            dao.criarPlaylist(nome);
-            JOptionPane.showMessageDialog(frame, "Playlist '" + nome + "' criada com sucesso!");
+            dao.criarPlaylist(nome.trim());
         }
     }
 
     private void exibirPlaylist() {
-        String nome = JOptionPane.showInputDialog("Digite o nome da playlist a exibir:");
+        String nome = JOptionPane.showInputDialog("Digite o nome da playlist:");
         if (nome != null && !nome.trim().isEmpty()) {
-            String resultado = dao.exibirPlaylist(nome);
+            String resultado = dao.exibirPlaylist(nome.trim());
             JOptionPane.showMessageDialog(frame, resultado);
         }
     }
 
-    private void adicionarMusicaAPlaylist() {
-        String nome = JOptionPane.showInputDialog("Digite o nome da playlist:");
-        String idStr = JOptionPane.showInputDialog("Digite o ID da música a adicionar:");
-        if (nome != null && idStr != null) {
+    private void adicionarMusicaPlaylist() {
+        String playlist = JOptionPane.showInputDialog("Digite o nome da playlist:");
+        String idStr = JOptionPane.showInputDialog("Digite o ID da música:");
+        if (playlist != null && idStr != null) {
             try {
                 int id = Integer.parseInt(idStr);
-                dao.adicionarMusicaAPlaylist(nome, id);
-                JOptionPane.showMessageDialog(frame, "Música adicionada à playlist '" + nome + "' com sucesso!");
+                dao.adicionarMusicaAPlaylist(playlist.trim(), id);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "ID inválido.");
             }
