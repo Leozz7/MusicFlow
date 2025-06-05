@@ -1,6 +1,5 @@
 package entity;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,7 +15,9 @@ public class MusicaService {
             default -> throw new IllegalArgumentException("Campo inválido: " + campo);
         };
 
-        if (!asc) comparator = comparator.reversed();
+        if (!asc) {
+            comparator = comparator.reversed();
+        }
         musicas.sort(comparator);
     }
 }
